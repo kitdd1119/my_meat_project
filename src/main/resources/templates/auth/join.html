@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html xmlns="http://www.thymeleaf.org">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="/css/join.css">
+  <title>회원가입</title>
+</head>
+
+
+<body>
+  <div class="main"> <!-- 큰 틀 -->
+    <div class="mainTopBar"> <!-- 상단 툴 바 전체 -->
+      <div class="topBarLog"> <!-- (로그인-회원가입)를 넣기 위한 틀 -->
+        <div class="newUser"><button onclick=joinPage()>회원가입</button></div>
+        <div class="login"><button onclick=loginPage()>로그인</button></div>
+      </div>
+      <!-- 로고 - 검색툴 - 지도와 내정보와 커뮤니티 이미지 -->
+      <div class="topBarContent">
+        <!-- 로고 -->
+        <div class="logo">
+          <button onclick=mainPage()>
+            <img class="logoImg" src="/image/rogo.png" alt="로고">
+          </button>
+        </div>
+        <!-- 검색툴 -->
+        <div class="search">
+          <input placeholder="검색어를 입력해주세요">
+          <button>
+            <img class="searchImg" src="/image/search.png" alt="검색">
+          </button>
+        </div>
+        <!-- 지도와 내정보와 커뮤니티 이미지 -->
+        <div class="topBarImg">
+          <div class="topBarMap">
+            <button onclick=mapPage()>
+              <img class="mapImg" src="/image/mapmarker.png" alt="지도">
+            </button>
+          </div>
+          <div class="topBarMyInformation">
+            <button onclick=myInformationPage()>
+              <img class="myInformationImg" src="/image/user.png" alt="내정보">
+            </button>
+          </div>
+          <div class="topBarCommunity">
+            <button onclick=communityPage()>
+              <img class="communityImg" src="/image/community.png" alt="커뮤니티">
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="container">
+    <h2>회원가입</h2>
+    <form>
+      <input type="text" placeholder="아이디" name="username" id="id">
+      <input type="password" placeholder="비밀번호" name="password" id="password">
+      <input type="password" placeholder="비밀번호 확인" name="confirmPassword">
+      <input type="text" placeholder="이름" name="name" id="userName">
+      <input type="email" placeholder="이메일" name="email">
+      <button type="button" onclick=requestJoin()>회원가입</button>
+    </form>
+    <p>이미 회원이신가요? <a href=login>로그인</a></p>
+  </div>
+</body>
+<script>
+  const mainPage = () => location.href = "/";
+
+  const joinPage = () => location.replace("/auth/join");
+  const loginPage = () => location.replace("/auth/login");
+
+  const mapPage = () => location.replace("/topbar/map");
+  const myInformationPage = () => location.replace("/topbar/myInformation");
+  const communityPage = () => location.replace("/topbar/community");
+
+
+  const requestJoin = () => {
+    if (!validateFields()) {
+      return;
+    }
+    const dto = {
+      user: {
+        id: document.getElementById("id").value,
+        password: document.getElementById("password").value
+      },
+    };
+    fetch("/api/v1/auth/join", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json;charset=utf-8"
+      },
+      body: JSON.stringify(dto)
+    })
+      .then(response => response.json())
+      .then((result) => {
+        alert(result.message);
+
+        if (result.code === 0) {
+          location.href = ("/auth/login");
+        }
+      })
+  };
+
+  const validateFields = () => {
+    const idElement = document.getElementById("id");
+    const pwElement = document.getElementById("password");
+    const pw2Element = document.getElementById("password2");
+
+    if (idElement.value === "") {
+      alert("아이디를 입력해주세요.");
+      idElement.focus();
+      return false;
+    }
+    if (pwElement.value === "") {
+      alert("비밀번호를 입력해주세요.");
+      pwElement.focus();
+      return false;
+    }
+    if (pw2Element.value === "") {
+      alert("비밀번호 확인을 입력해주세요.");
+      pw2Element.focus();
+      return false;
+    }
+    return true;
+  };
+
+
+
+</script>
+
+</html>
