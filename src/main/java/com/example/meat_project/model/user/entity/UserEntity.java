@@ -26,6 +26,18 @@ public class UserEntity {
   @Column(name = "password", nullable = false)
   private String password;
 
+  @Column(name = "user_name", nullable = false, unique = true)
+  private String userName;
+
+  @Column(name = "user_phone_number", nullable = false, unique = true)
+  private String userPhoneNumber;
+
+  @Column(name = "user_email", nullable = false, unique = true)
+  private String userEmail;
+  
+  @Column(name = "user_address", nullable = false)
+  private String userAddress;
+
   @Column(name = "create_date", nullable = false)
   private LocalDateTime createDate;
 
@@ -34,15 +46,6 @@ public class UserEntity {
 
   @Column(name = "delete_date")
   private LocalDateTime deleteDate;
-
-  @Column(name = "user_name", nullable = false, unique = true)
-  private String userName;
-
-  @Column(name = "user_phone_number", nullable = false, unique = true)
-  private String userPhoneNumber;
-
-  @Column(name = "userAddress", nullable = false)
-  private String userAddress;
 
   @OneToMany(mappedBy = "userEntity", fetch = FetchType.EAGER)
   private List<UserRoleEntity> userRoleEntityList;

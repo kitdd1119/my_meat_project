@@ -8,23 +8,23 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-@AllArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
 @Getter
 public class ReqLoginDTO {
   @Valid
-  @NotNull
+  @NotNull(message = "회원 정보를 입력해주세요.")
   private User user;
 
-  @AllArgsConstructor
   @NoArgsConstructor
+  @AllArgsConstructor
   @Getter
   @Builder
   public static class User {
-    @NotBlank
+    @NotBlank(message = "아이디를 입력해주세요.")
     private String id;
 
-    @NotBlank
+    @NotBlank(message = "비밀번호를 입력해주세요.")
     private String password;
 
   }

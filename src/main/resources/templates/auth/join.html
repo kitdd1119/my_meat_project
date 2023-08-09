@@ -54,13 +54,15 @@
   </div>
   <div class="container">
     <h2>회원가입</h2>
-    <form>
-      <input type="text" placeholder="아이디" name="username" id="id">
+    <form id="joinForm">
+      <input type="text" placeholder="아이디" name="id" id="id">
       <input type="password" placeholder="비밀번호" name="password" id="password">
-      <input type="password" placeholder="비밀번호 확인" name="confirmPassword">
+      <input type="password" placeholder="비밀번호 확인" name="confirmPassword" id="confirmPassword">
       <input type="text" placeholder="이름" name="name" id="userName">
-      <input type="email" placeholder="이메일" name="email">
-      <button type="button" onclick=requestJoin()>회원가입</button>
+      <input type="phone" placeholder="휴대전화" name="phone" id="userPhoneNumber">
+      <input type="email" placeholder="이메일" name="email" id="userEmail">
+      <input type="address" placeholder="주소" name="address" id="userAddress">
+      <button class="joinButton" type="submit" onclick=requestJoin()>회원가입</button>
     </form>
     <p>이미 회원이신가요? <a href=login>로그인</a></p>
   </div>
@@ -75,38 +77,54 @@
   const myInformationPage = () => location.replace("/topbar/myInformation");
   const communityPage = () => location.replace("/topbar/community");
 
+  const joinForm = document.getElementById("joinForm");
+  joinForm.addEventListener("submit", (event) => {
+    event.preventDefault(); // (회원 정보 입력 후 엔터를 누를 시 입력한 정보가 사라짐.) 폼 제출 기본 동작 막기 
+  });
 
   const requestJoin = () => {
     if (!validateFields()) {
       return;
     }
+
+    const idElement = document.getElementById("id");
+    const pwElement = document.getElementById("password");
+
     const dto = {
       user: {
-        id: document.getElementById("id").value,
-        password: document.getElementById("password").value
+        id: idElement.value,
+        password: pwElement.value
       },
     };
     fetch("/api/v1/auth/join", {
       method: "POST",
       headers: {
-        "Content-Type": "application/json;charset=utf-8"
+        "Content-Type": "application/json;charset=utf-8",
       },
       body: JSON.stringify(dto)
     })
       .then(response => response.json())
       .then((result) => {
-        alert(result.message);
-
         if (result.code === 0) {
-          location.href = ("/auth/login");
+          alert(result.message);
+          location.replace("/auth/login");
+        } else {
+          alert(result.message);
         }
       })
+      .catch((error) => {
+        console.log(error);
+      });
   };
 
   const validateFields = () => {
     const idElement = document.getElementById("id");
     const pwElement = document.getElementById("password");
-    const pw2Element = document.getElementById("password2");
+    const pw2Element = document.getElementById("confirmPassword");
+    const phoneElement = document.getElementById("userPhoneNumber");
+    const nameElement = document.getElementById("userName");
+    const emailElement = document.getElementById("userEmail");
+    const addressElement = document.getElementById("userAddress");
 
     if (idElement.value === "") {
       alert("아이디를 입력해주세요.");
@@ -123,6 +141,37 @@
       pw2Element.focus();
       return false;
     }
+
+    if (pwElement.value !== pw2Element.value) {
+      alert("비밀번호가 일치하지 않습니다.");
+      pw2Element.focus();
+      return false;
+    }
+
+    if (nameElement.value === "") {
+      alert("이름을 입력해주세요.");
+      nameElement.focus();
+      return false;
+    }
+
+    if (phoneElement.value === "") {
+      alert("휴대폰 번호를 입력해주세요.");
+      phoneElement.focus();
+      return false;
+    }
+
+    if (emailElement.value === "") {
+      alert("이메일을 입력해주세요.");
+      emailElement.focus();
+      return false;
+    }
+
+    if (addressElement.value === "") {
+      alert("주소를 입력해주세요.");
+      addressElement.focus();
+      return false;
+    }
+
     return true;
   };
 

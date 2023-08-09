@@ -1,10 +1,9 @@
 package com.example.meat_project.model.user.repository;
 
-import java.util.Optional;
-
+import com.example.meat_project.model.user.entity.UserEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import com.example.meat_project.model.user.entity.UserEntity;
+import java.util.Optional;
 
 public interface UserRepository extends JpaRepository<UserEntity, Long> {
 

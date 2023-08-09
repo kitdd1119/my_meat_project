@@ -36,12 +36,20 @@ body {
   cursor: pointer;
 }
 
+.newUser button:hover {
+  text-decoration: underline;
+}
+
 /* 로그인 버튼 */
 .login button {
   background-color: transparent;
   border: none;
   color: #333;
   cursor: pointer;
+}
+
+.login button:hover {
+  text-decoration: underline;
 }
 
 /* 로고 버튼 설정 */
