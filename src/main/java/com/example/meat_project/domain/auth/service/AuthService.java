@@ -26,18 +26,17 @@ public class AuthService {
   private final UserRepository userRepository;
 
   public ResponseEntity<?> login(ReqLoginDTO dto, HttpSession session) {
-    // // 유효성 체크
-    // if (dto.getUser().getId() == null ||
-    // dto.getUser().getId().equals("") ||
-    // dto.getUser().getPassword() == null ||
-    // dto.getUser().getPassword().equals("")
-    // ) {
-    // throw new BadRequestException("아이디나 비밀번호를 입력해주세요.");
-    // }
+    // 유효성 체크
+    if (dto.getUser().getId() == null ||
+    dto.getUser().getId().equals("") ||
+    dto.getUser().getPassword() == null ||
+    dto.getUser().getPassword().equals("")
+    ) {
+    throw new BadRequestException("아이디나 비밀번호를 입력해주세요.");
+    }
 
     // 리파지토리에서 아이디로 삭제되지 않은 유저 찾기
-    Optional<UserEntity> userEntityOptional = userRepository
-        .findByIdAndDeleteDateIsNull(dto.getUser().getId());
+    Optional<UserEntity> userEntityOptional = userRepository.findById(dto.getUser().getId()); // AndDeleteDateIsNull
 
     // 없으면 (존재하지 않는 사용자입니다.) 메시지 리턴
     if (userEntityOptional.isEmpty()) {
@@ -52,7 +51,7 @@ public class AuthService {
     // 비밀번호가 일치하지 않으면 (비밀번호가 일치하지 않습니다.) 메시지 리턴
     if (!userEntity.getPassword().equals(dto.getUser().getPassword())) {
       throw new BadRequestException("비밀번호가 일치하지 않습니다.");
-    }
+    } 
 
     // 세션에 로그인 유저 정보 저장
     session.setAttribute("dto", LoginUserDTO.of(userEntity));
@@ -68,15 +67,15 @@ public class AuthService {
 
   @Transactional
   public ResponseEntity<?> join(ReqJoinDTO dto) {
-    // // 회원가입 정보 입력했는지 확인
-    // if (dto.getUser() == null ||
-    // dto.getUser().getId() == null ||
-    // dto.getUser().getId().equals("") ||
-    // dto.getUser().getPassword() == null ||
-    // dto.getUser().getPassword().equals("")) {
+    // 회원가입 정보 입력했는지 확인
+    if (dto.getUser() == null ||
+    dto.getUser().getId() == null ||
+    dto.getUser().getId().equals("") ||
+    dto.getUser().getPassword() == null ||
+    dto.getUser().getPassword().equals("")) {
 
-    // throw new BadRequestException("아이디나 비밀번호를 입력해주세요.");
-    // }
+    throw new BadRequestException("아이디나 비밀번호를 입력해주세요.");
+    }
     
     // 리파지토리에서 아이디로 유저 찾기
     Optional<UserEntity> userEntityOptional = userRepository.findById(dto.getUser().getId());
@@ -90,6 +89,10 @@ public class AuthService {
     UserEntity userEntity = UserEntity.builder()
         .id(dto.getUser().getId())
         .password(dto.getUser().getPassword())
+        .userName(dto.getUser().getUserName())
+        .userPhoneNumber(dto.getUser().getUserPhoneNumber())
+        .userEmail(dto.getUser().getUserEmail())
+        .userAddress(dto.getUser().getUserAddress())
         .createDate(LocalDateTime.now())
         .build();
 

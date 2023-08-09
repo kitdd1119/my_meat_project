@@ -4,7 +4,6 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Entity
 @Table(name = "`user`")
@@ -46,8 +45,5 @@ public class UserEntity {
 
   @Column(name = "delete_date")
   private LocalDateTime deleteDate;
-
-  @OneToMany(mappedBy = "userEntity", fetch = FetchType.EAGER)
-  private List<UserRoleEntity> userRoleEntityList;
 
 }

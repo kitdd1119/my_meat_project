@@ -1,7 +1,5 @@
 package com.example.meat_project.common.dto;
 
-import java.util.List;
-
 import com.example.meat_project.model.user.entity.UserEntity;
 
 import lombok.AllArgsConstructor;
@@ -34,20 +32,13 @@ public class LoginUserDTO {
     private Long idx;
     private String id;
     private String password;
-    private List<String> roleList;
 
     public static User fromEntity(UserEntity userEntity) {
       return User.builder()
           .idx(userEntity.getIdx())
           .id(userEntity.getId())
           .password(userEntity.getPassword())
-          .roleList(
-              userEntity.getUserRoleEntityList()
-                  .stream()
-                  .map(userRoleEntity -> userRoleEntity.getRole())
-                  .toList())
           .build();
     }
   }
-
 }

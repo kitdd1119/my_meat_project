@@ -33,6 +33,12 @@ public class ReqJoinDTO {
     @Size(min = 4, message = "비밀번호는 4자 이상 입력해주세요.")
     private String password;
 
+    private String userName;
+
+    private String userPhoneNumber;
+
+    private String userEmail;
+
     @NotBlank(message = "이메일을 입력해주세요.")
     @Pattern(regexp = "^(?!\\s*$).+", message = "주소를 입력해주세요.")
     private String userAddress;
