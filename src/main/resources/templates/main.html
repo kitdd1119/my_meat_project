@@ -15,6 +15,9 @@
             <div class="topBarLog"> <!-- (로그인-회원가입)를 넣기 위한 틀 -->
                 <div class="newUser"><button onclick=joinPage()>회원가입</button></div>
                 <div class="login"><button onclick=loginPage()>로그인</button></div>
+                <div class="logout" th:if="${dto != null && isLoggedIn}"><button onclick=logoutPage()>로그아웃</button>
+                    <div th:text="${dto}"></div>
+                </div>
             </div>
             <!-- 로고 - 검색툴 - 지도와 내정보와 커뮤니티 이미지 -->
             <div class="topBarContent">
@@ -78,7 +81,20 @@
     const myInformationPage = () => location.replace("topbar/myInformation");
     const communityPage = () => location.replace("topbar/community");
 
-
+    const logoutPage = () => {
+        // 로그아웃 처리 수행
+        fetch('/auth/logout', { method: 'GET' })
+            .then(response => {
+                if (response.ok) {
+                    // 로그아웃 성공시 메시지와 함께 페이지 리로딩
+                    alert('로그아웃 되었습니다.');
+                    location.reload();
+                }
+            })
+            .catch(error => {
+                console.error('로그아웃 오류:', error);
+            });
+    };
 
 </script>
 
