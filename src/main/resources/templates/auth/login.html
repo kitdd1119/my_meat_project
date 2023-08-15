@@ -57,7 +57,7 @@
       <input type="text" placeholder="아이디" name="username" id="id">
       <input type="password" placeholder="비밀번호" name="password" id="password">
       <input type="checkbox" id="rememberMe"> 아이디 기억하기
-      <button class="loginButton" type="submit" onclick=requestLogin()>로그인</button>
+      <button class="loginButton" type="button" onclick=requestLogin()>로그인</button>
     </form>
     <p>아직 회원이 아니신가요? <a href=join>회원가입</a></p>
   </div>
@@ -140,12 +140,12 @@
     const pwElement = document.getElementById("password");
 
     if (idElement.value === "") {
-      alert("아이디를 입력해주세요.");
+      // alert("아이디를 입력해주세요.");
       idElement.focus();
       return false;
     }
     if (pwElement.value === "") {
-      alert("비밀번호를 입력해주세요.");
+      // alert("비밀번호를 입력해주세요.");
       pwElement.focus();
       return false;
     }

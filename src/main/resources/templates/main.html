@@ -15,64 +15,63 @@
             <div class="topBarLog"> <!-- (로그인-회원가입)를 넣기 위한 틀 -->
                 <div class="newUser"><button onclick=joinPage()>회원가입</button></div>
                 <div class="login"><button onclick=loginPage()>로그인</button></div>
-                <div class="logout" th:if="${dto != null && isLoggedIn}"><button onclick=logoutPage()>로그아웃</button>
-                    <div th:text="${dto}"></div>
-                </div>
+                <div class="logout"><button onclick=logoutPage()>로그아웃</button></div>
             </div>
-            <!-- 로고 - 검색툴 - 지도와 내정보와 커뮤니티 이미지 -->
-            <div class="topBarContent">
-                <!-- 로고 -->
-                <div class="logo">
-                    <button onclick=mainPage()>
-                        <img class="logoImg" src="image/rogo.png" alt="로고">
+        </div>
+        <!-- 로고 - 검색툴 - 지도와 내정보와 커뮤니티 이미지 -->
+        <div class="topBarContent">
+            <!-- 로고 -->
+            <div class="logo">
+                <button onclick=mainPage()>
+                    <img class="logoImg" src="image/rogo.png" alt="로고">
+                </button>
+            </div>
+            <!-- 검색툴 -->
+            <div class="search">
+                <input placeholder="검색어를 입력해주세요">
+                <button>
+                    <img class="searchImg" src="image/search.png" alt="검색">
+                </button>
+            </div>
+            <!-- 지도와 내정보와 커뮤니티 이미지 -->
+            <div class="topBarImg">
+                <div class="topBarMap">
+                    <button onclick=mapPage()>
+                        <img class="mapImg" src="image/mapmarker.png" alt="지도">
                     </button>
                 </div>
-                <!-- 검색툴 -->
-                <div class="search">
-                    <input placeholder="검색어를 입력해주세요">
-                    <button>
-                        <img class="searchImg" src="image/search.png" alt="검색">
+                <div class="topBarMyInformation">
+                    <button onclick=myInformationPage()>
+                        <img class="myInformationImg" src="image/user.png" alt="내정보">
                     </button>
                 </div>
-                <!-- 지도와 내정보와 커뮤니티 이미지 -->
-                <div class="topBarImg">
-                    <div class="topBarMap">
-                        <button onclick=mapPage()>
-                            <img class="mapImg" src="image/mapmarker.png" alt="지도">
-                        </button>
-                    </div>
-                    <div class="topBarMyInformation">
-                        <button onclick=myInformationPage()>
-                            <img class="myInformationImg" src="image/user.png" alt="내정보">
-                        </button>
-                    </div>
-                    <div class="topBarCommunity">
-                        <button onclick=communityPage()>
-                            <img class="communityImg" src="image/community.png" alt="커뮤니티">
-                        </button>
-                    </div>
+                <div class="topBarCommunity">
+                    <button onclick=communityPage()>
+                        <img class="communityImg" src="image/community.png" alt="커뮤니티">
+                    </button>
                 </div>
             </div>
         </div>
+    </div>
 
-        <!-- 광고 -->
-        <div class="advertisement"></div>
+    <!-- 광고 -->
+    <div class="advertisement"></div>
 
-        <!-- 고기 시세와 커뮤니트를 포함하는 큰 틀 -->
-        <div class="bottomContent">
-            <!-- 고기 시세 툴 -->
-            <div class="meatPrice">고기</div>
+    <!-- 고기 시세와 커뮤니트를 포함하는 큰 틀 -->
+    <div class="bottomContent">
+        <!-- 고기 시세 툴 -->
+        <div class="meatPrice">고기</div>
 
-            <!-- 커뮤니티 툴 -->
-            <div class="community">커뮤니티</div>
-            <!-- <button aria-label="submit"></button> -->
-        </div>
+        <!-- 커뮤니티 툴 -->
+        <div class="community">커뮤니티</div>
+        <!-- <button aria-label="submit"></button> -->
+    </div>
     </div>
 
 
 </body>
 <script>
-    const mainPage = () => location.href("/");
+    const mainPage = () => location.href = "/";
 
     const joinPage = () => location.replace("auth/join");
     const loginPage = () => location.replace("auth/login");
@@ -82,19 +81,8 @@
     const communityPage = () => location.replace("topbar/community");
 
     const logoutPage = () => {
-        // 로그아웃 처리 수행
-        fetch('/auth/logout', { method: 'GET' })
-            .then(response => {
-                if (response.ok) {
-                    // 로그아웃 성공시 메시지와 함께 페이지 리로딩
-                    alert('로그아웃 되었습니다.');
-                    location.reload();
-                }
-            })
-            .catch(error => {
-                console.error('로그아웃 오류:', error);
-            });
-    };
+        location.replace('auth/logout');
+    }
 
 </script>
 

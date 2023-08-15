@@ -53,17 +53,64 @@
   </div>
   <div>
     <h1>내 정보</h1>
+    <div>
+      <h2>내 정보 보기</h2>
+      <p>이름: John Doe</p>
+      <p>이메일: john@example.com</p>
+      <p>전화번호: 123-456-7890</p>
+      <button onclick="editMyInformation()">내 정보 수정</button>
+    </div>
+
+    <div id="editForm" style="display: none;">
+      <h2>내 정보 수정</h2>
+      <form>
+        <label for="name">이름:</label>
+        <input type="text" id="name" name="name"><br>
+
+        <label for="email">이메일:</label>
+        <input type="email" id="email" name="email"><br>
+
+        <label for="phone">전화번호:</label>
+        <input type="tel" id="phone" name="phone"><br>
+
+        <button type="button" onclick="saveChanges()">저장</button>
+        <button type="button" onclick="cancelEdit()">취소</button>
+      </form>
+    </div>
   </div>
 </body>
 <script>
   const mainPage = () => location.href = "/";
 
-  const joinPage = () => location.replace("/auth/join");
-  const loginPage = () => location.replace("/auth/login");
+  const joinPage = () => location.href = "/auth/join";
+  const loginPage = () => location.href = "/auth/login";
 
-  const mapPage = () => location.replace("/topbar/map");
-  const myInformationPage = () => location.replace("/topbar/myInformation");
-  const communityPage = () => location.replace("/topbar/community");
+  const mapPage = () => location.href = "map";
+  const myInformationPage = () => location.href = "myInformation";
+  const communityPage = () => location.href = "community";
+
+  const editMyInformation = () => {
+    document.getElementById("editForm").style.display = "block";
+  };
+
+  const saveChanges = () => {
+    const newName = document.getElementById("name").value;
+    const newEmail = document.getElementById("email").value;
+    const newPhone = document.getElementById("phone").value;
+
+    // TODO: 실제로 서버로 수정된 정보를 보내고 처리하는 로직이 필요합니다.
+
+    // 수정 완료 후, 수정 폼을 감추고 정보 보기 섹션을 업데이트합니다.
+    document.getElementById("editForm").style.display = "none";
+    document.querySelector("h2").textContent = `내 정보 보기 (${newName})`;
+    document.querySelector("p:nth-of-type(1)").textContent = `이름: ${newName}`;
+    document.querySelector("p:nth-of-type(2)").textContent = `이메일: ${newEmail}`;
+    document.querySelector("p:nth-of-type(3)").textContent = `전화번호: ${newPhone}`;
+  };
+
+  const cancelEdit = () => {
+    document.getElementById("editForm").style.display = "none";
+  };
 </script>
 
 </html>

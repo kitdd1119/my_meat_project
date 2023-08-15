@@ -4,6 +4,10 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
+  <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jqueryui/1.10.4/jquery-ui.min.js"></script>
+  <script src="//netdna.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+  <link href="//netdna.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css" />
   <link rel="stylesheet" href="/css/topbar/community.css">
   <title>커뮤니티</title>
 </head>
@@ -51,20 +55,260 @@
       </div>
     </div>
   </div>
-  <div>
-    <h1>커뮤니티</h1>
+  <nav class="navbar navbar-default">
+    <div class="container-fluid">
+      <div class="navbar-header">
+        <a class="navbar-brand" href="javascript:void(0)">
+          <span id="userId" th:text="${session.loginUserDTO.user.id}"></span>'s work
+        </a>
+      </div>
+      <button type="button" onclick="logout()" class="btn btn-default navbar-btn navbar-right">logout</button>
+    </div>
+  </nav>
+  <div class="container">
+    <div class="row">
+      <div class="col-md-6">
+        <div class="communitylist not-done">
+          <h1>COMMUNITY LIST</h1>
+          <input id="content" type="text" class="form-control add-community" placeholder="할일을 입력하고 엔터를 치세요" autofocus />
+          <hr />
+          <ul id="communityList" class="list-unstyled">
+            <li class="ui-state-default" th:each="community : ${dto.communityList}">
+              <div class="checkbox">
+                <label>
+                  <input th:onchange="setDoneY([[${community.idx}]])" type="checkbox" />
+                  <span th:text="${community.content}"></span>
+                </label>
+              </div>
+            </li>
+          </ul>
+          <div class="community-footer">
+            <strong>
+              <span id="communityCount" class="count-communitys" th:text="${dto.communityList.size()}"></span>
+            </strong>
+            항목 남았음
+          </div>
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="communitylist">
+          <h1>DONE LIST</h1>
+          <ul id="doneList" class="list-unstyled">
+            <li th:each="community : ${dto.doneList}">
+              <div class="checkbox">
+                <label>
+                  <input th:onchange="setDoneN([[${community.idx}]])" class="remove-item" type="checkbox" />
+                  <span th:text="${community.content}"></span>
+                </label>
+                <button th:onclick="setDelete([[${community.idx}]])"
+                  class="remove-item btn btn-default btn-xs pull-right">
+                  <span class="glyphicon glyphicon-remove"></span>
+                </button>
+              </div>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
   </div>
+
 </body>
 
 <script>
   const mainPage = () => location.href = "/";
 
-  const joinPage = () => location.replace("/auth/join");
-  const loginPage = () => location.replace("/auth/login");
+  const joinPage = () => location.href = "/auth/join";
+  const loginPage = () => location.href = "/auth/login";
 
-  const mapPage = () => location.replace("/topbar/map");
-  const myInformationPage = () => location.replace("/topbar/myInformation");
-  const communityPage = () => location.replace("/topbar/community");
+  const mapPage = () => location.href = "map";
+  const myInformationPage = () => location.href = "myInformation";
+  const communityPage = () => location.href = "community";
+
+  const logout = () => {
+    location.replace('/auth/logout');
+  }
+</script>
+
+<script>
+  console.log("스타일 참고", "https://bootsnipp.com/snippets/QbN51");
+
+  const init = () => {
+    fetch(`/api/v1/community`)
+      .then((response) => response.json())
+      .then((result) => {
+        if (result.code === 0) {
+
+          const communityList = result.data.communityList;
+          const doneList = result.data.doneList;
+
+          document.querySelector("#communityList").innerHTML = "";
+
+          for (const community of communityList) {
+            document.querySelector("#communityList").insertAdjacentHTML(
+              "beforeend",
+              `
+                        <li class="ui-state-default">
+                            <div class="checkbox">
+                                <label>
+                                    <input
+                                        onchange="setDoneY(${community.idx})"
+                                        type="checkbox"
+                                    />
+                                    <span>${community.content}</span>
+                                </label>
+                            </div>
+                        </li>
+                        `
+            );
+          }
+
+          document.querySelector("#communityCount").innerText = communityList.length;
+
+          document.querySelector("#doneList").innerHTML = "";
+
+          for (const community of doneList) {
+            document.querySelector("#doneList").insertAdjacentHTML(
+              "beforeend",
+              `
+                        <li>
+                            <div class="checkbox">
+                                <label>
+                                    <input
+                                        onchange="setDoneN(${community.idx})"
+                                        class="remove-item"
+                                        type="checkbox"
+                                    />
+                                    <span>${community.content}</span>
+                                </label>
+                                <button
+                                    onclick="setDelete(${community.idx})"
+                                    class="remove-item btn btn-default btn-xs pull-right"
+                                >
+                                    <span class="glyphicon glyphicon-remove"></span>
+                                </button>
+                            </div>
+                        </li>
+                        `
+            );
+          }
+        } else {
+          console.log(result.message);
+        }
+      })
+      .catch((error) => {
+        alert(error.message);
+      });
+  };
+  init();
+
+  const contentInput = document.querySelector("#content");
+  contentInput.addEventListener("keypress", (e) => {
+    if (e.code !== "Enter") return;
+    if (contentInput.value === "") return;
+
+    const dto = {
+      community: {
+        content: contentInput.value
+      }
+    };
+
+    fetch(`/api/v1/community`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json;charset=utf-8',
+      },
+      body: JSON.stringify(dto),
+    })
+      .then((response) => response.json())
+      .then((result) => {
+        if (result.code === 0) {
+          contentInput.value = "";
+          init();
+        } else {
+          alert(result.message);
+        }
+      })
+      .catch((error) => {
+        alert(error.message);
+      });
+  });
+
+
+  const setDoneY = (idx) => {
+
+    const dto = {
+      community: {
+        doneYn: "Y"
+      }
+    }
+
+    fetch(`/api/v1/community/` + idx, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json;charset=utf-8',
+      },
+      body: JSON.stringify(dto),
+    })
+      .then((response) => response.json())
+      .then((result) => {
+        if (result.code === 0) {
+          init();
+        } else {
+          alert(result.message);
+        }
+      })
+      .catch((error) => {
+        alert(error.message);
+      });
+  };
+
+  const setDoneN = (idx) => {
+
+    const dto = {
+      community: {
+        doneYn: "N"
+      }
+    }
+
+    fetch(`/api/v1/community/` + idx, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json;charset=utf-8',
+      },
+      body: JSON.stringify(dto),
+    })
+      .then((response) => response.json())
+      .then((result) => {
+        if (result.code === 0) {
+          init();
+        } else {
+          alert(result.message);
+        }
+      })
+      .catch((error) => {
+        alert(error.message);
+      });
+  };
+
+  const setDelete = (idx) => {
+    fetch(`/api/v1/community/` + idx, {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json;charset=utf-8',
+      },
+    })
+      .then((response) => response.json())
+      .then((result) => {
+        if (result.code === 0) {
+          init();
+        } else {
+          alert(result.message);
+        }
+      })
+      .catch((error) => {
+        alert(error.message);
+      });
+  };
 </script>
 
 </html>

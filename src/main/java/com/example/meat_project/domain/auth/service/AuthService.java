@@ -1,15 +1,5 @@
 package com.example.meat_project.domain.auth.service;
 
-import com.example.meat_project.common.dto.LoginUserDTO;
-import com.example.meat_project.common.dto.ResponseDTO;
-import com.example.meat_project.common.exception.BadRequestException;
-import com.example.meat_project.domain.auth.dto.ReqJoinDTO;
-import com.example.meat_project.domain.auth.dto.ReqLoginDTO;
-import com.example.meat_project.model.user.entity.UserEntity;
-import com.example.meat_project.model.user.repository.UserRepository;
-import jakarta.servlet.http.HttpSession;
-import lombok.RequiredArgsConstructor;
-
 import java.time.LocalDateTime;
 import java.util.Optional;
 
@@ -18,13 +8,23 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.example.meat_project.common.dto.LoginUserDTO;
+import com.example.meat_project.common.dto.ResponseDTO;
+import com.example.meat_project.common.exception.BadRequestException;
+import com.example.meat_project.domain.auth.dto.ReqJoinDTO;
+import com.example.meat_project.domain.auth.dto.ReqLoginDTO;
+import com.example.meat_project.model.user.entity.UserEntity;
+import com.example.meat_project.model.user.repository.UserRepository;
+
+import jakarta.servlet.http.HttpSession;
+import lombok.RequiredArgsConstructor;
+
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class AuthService {
 
   private final UserRepository userRepository;
-  private final HttpSession httpSession;
 
   public ResponseEntity<?> login(ReqLoginDTO dto, HttpSession session) {
     // 유효성 체크
@@ -36,7 +36,7 @@ public class AuthService {
     }
 
     // 리파지토리에서 아이디로 삭제되지 않은 유저 찾기
-    Optional<UserEntity> userEntityOptional = userRepository.findById(dto.getUser().getId()); // AndDeleteDateIsNull
+    Optional<UserEntity> userEntityOptional = userRepository.findByIdAndDeleteDateIsNull(dto.getUser().getId()); // AndDeleteDateIsNull
 
     // 없으면 (존재하지 않는 사용자입니다.) 메시지 리턴
     if (userEntityOptional.isEmpty()) {
@@ -71,6 +71,7 @@ public class AuthService {
     if (dto.getUser() == null ||
         dto.getUser().getId() == null ||
         dto.getUser().getId().equals("") ||
+        dto.getUser().getId().length() < 4 ||
         dto.getUser().getPassword() == null ||
         dto.getUser().getPassword().equals("") ||
         dto.getUser().getUserName() == null ||
@@ -111,19 +112,6 @@ public class AuthService {
         ResponseDTO.builder()
             .code(0)
             .message("회원가입에 성공하였습니다.")
-            .build(),
-        HttpStatus.OK);
-  }
-
-  @Transactional
-  public ResponseEntity<?> logout() {
-    // 세션에 저장된 로그인 정보 제거
-    httpSession.removeAttribute("dto");
-
-    return new ResponseEntity<>(
-        ResponseDTO.builder()
-            .code(0)
-            .message("로그아웃 되었습니다.")
             .build(),
         HttpStatus.OK);
   }

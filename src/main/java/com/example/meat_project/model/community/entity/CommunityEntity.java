@@ -1,37 +1,52 @@
 package com.example.meat_project.model.community.entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
+import jakarta.persistence.*;
+import lombok.*;
+
+import java.time.LocalDateTime;
+
+import com.example.meat_project.model.user.entity.UserEntity;
 
 @Entity
-@Table(name = "`community`")
+@Table(name = "COMMUNITY")
+@Getter
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@Getter
-@ToString
+@EqualsAndHashCode(of = "idx", callSuper = false)
 public class CommunityEntity {
+
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
-  @Column(name = "post_num", nullable = false, unique = true)
-  private Long postNum;
+  @Column(name = "idx", nullable = false, unique = true)
+  private Long idx;
 
-  @Column(name = "id", nullable = false, unique = true)
-  private String id;
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "user_idx", referencedColumnName = "idx", updatable = false, nullable = false)
+  private UserEntity userEntity;
 
-  @Column(name = "user_name", nullable = false, unique = true)
-  private String userName;
+  @Column(name = "content", nullable = false)
+  private String content;
 
-  @Column(name = "post_title", nullable = false, unique = true)
-  private String postTitle;
+  @Column(name = "done_yn", nullable = false)
+  private String doneYn;
 
-  @Column(name = "post_content", nullable = false)
-  private String postContent;
+  @Column(name = "create_date", nullable = false)
+  private LocalDateTime createDate;
+
+  @Column(name = "update_date")
+  private LocalDateTime updateDate;
+
+  @Column(name = "delete_date")
+  private LocalDateTime deleteDate;
+
+  public void setDoneYn(String doneYn) {
+    this.doneYn = doneYn;
+    this.updateDate = LocalDateTime.now();
+  }
+
+  public void setDeleteDate(LocalDateTime deleteDate) {
+    this.deleteDate = deleteDate;
+  }
+
 }

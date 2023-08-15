@@ -6,20 +6,22 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="/css/topbar/map.css">
   <title>지도</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
 </head>
 
 <body>
   <div class="main"> <!-- 큰 틀 -->
     <div class="mainTopBar"> <!-- 상단 툴 바 전체 -->
       <div class="topBarLog"> <!-- (로그인-회원가입)를 넣기 위한 틀 -->
-        <div class="newUser"><button onclick=joinPage()>회원가입</button></div>
-        <div class="login"><button onclick=loginPage()>로그인</button></div>
+        <div class="newUser"><button type="button" onclick=joinPage()>회원가입</button></div>
+        <div class="login"><button type="button" onclick=loginPage()>로그인</button></div>
       </div>
       <!-- 로고 - 검색툴 - 지도와 내정보와 커뮤니티 이미지 -->
       <div class="topBarContent">
         <!-- 로고 -->
         <div class="logo">
-          <button onclick=mainPage()>
+          <button type="button" onclick=mainPage()>
             <img class="logoImg" src="/image/rogo.png" alt="로고">
           </button>
         </div>
@@ -33,17 +35,17 @@
         <!-- 지도와 내정보와 커뮤니티 이미지 -->
         <div class="topBarImg">
           <div class="topBarMap">
-            <button onclick=mapPage()>
+            <button type="button" onclick=mapPage()>
               <img class="mapImg" src="/image/mapmarker.png" alt="지도">
             </button>
           </div>
           <div class="topBarMyInformation">
-            <button onclick=myInformationPage()>
+            <button type="button" onclick=myInformationPage()>
               <img class="myInformationImg" src="/image/user.png" alt="내정보">
             </button>
           </div>
           <div class="topBarCommunity">
-            <button onclick=communityPage()>
+            <button type="button" onclick=communityPage()>
               <img class="communityImg" src="/image/community.png" alt="커뮤니티">
             </button>
           </div>
@@ -53,17 +55,37 @@
   </div>
   <div>
     <h1>지도</h1>
+    <div id="map" style="width: 100%; height: 400px;"></div>
   </div>
 </body>
 <script>
   const mainPage = () => location.href = "/";
 
-  const joinPage = () => location.replace("/auth/join");
-  const loginPage = () => location.replace("/auth/login");
+  const joinPage = () => location.href = "/auth/join";
+  const loginPage = () => location.href = "/auth/login";
 
-  const mapPage = () => location.replace("/topbar/map");
-  const myInformationPage = () => location.replace("/topbar/myInformation");
-  const communityPage = () => location.replace("/topbar/community");
+  const mapPage = () => location.href = "map";
+  const myInformationPage = () => location.href = "myInformation";
+  const communityPage = () => location.href = "community";
+
+  const map = L.map('map').setView([35.1648, 129.0605], 15); // 부산 시청역 위치로 초기화
+
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    maxZoom: 19,
+    attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap contributors</a>',
+  }).addTo(map);
+
+  const donkatsuLocation = [35.18159, 129.07717];
+  const marker = L.marker(donkatsuLocation).addTo(map);
+
+  const popupContent = `
+  <h3>미야</h3>
+  <p>주소: 부산광역시 연제구 중앙대로1043번길 14</p>
+  <p>전화번호: 051-xxx-xxxx</p>
+  <p><a href="https://map.naver.com/v5/entry/place/30806472?lng=129.07716348929443&lat=35.18159372522902&placePath=%2Freview%2Fugc&c=15,0,0,2,dh">웹사이트 방문</a></p>
+`;
+
+  marker.bindPopup(popupContent).openPopup();
 </script>
 
 </html>

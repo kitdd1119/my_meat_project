@@ -1,12 +1,14 @@
 package com.example.meat_project.model.user.entity;
 
+import com.example.meat_project.model.community.entity.CommunityEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
-@Table(name = "`user`")
+@Table(name = "`USER`")
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
@@ -33,7 +35,7 @@ public class UserEntity {
 
   @Column(name = "user_email", nullable = false, unique = true)
   private String userEmail;
-  
+
   @Column(name = "user_address", nullable = false)
   private String userAddress;
 
@@ -45,5 +47,11 @@ public class UserEntity {
 
   @Column(name = "delete_date")
   private LocalDateTime deleteDate;
+
+  @OneToMany(fetch = FetchType.EAGER, mappedBy = "userEntity")
+  private List<UserRoleEntity> UserRoleEntityList;
+
+  @OneToMany(fetch = FetchType.LAZY, mappedBy = "userEntity")
+  private List<CommunityEntity> CommunityEntityList;
 
 }
