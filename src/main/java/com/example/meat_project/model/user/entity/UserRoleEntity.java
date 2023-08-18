@@ -8,6 +8,7 @@ import java.time.LocalDateTime;
 @Entity
 @Table(name = "USER_ROLE")
 @Getter
+@Setter
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
@@ -17,7 +18,7 @@ public class UserRoleEntity {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   @Column(name = "idx", nullable = false, unique = true)
-  private Integer idx;
+  private Long idx;
 
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "user_idx", referencedColumnName = "idx", updatable = false, nullable = false)
@@ -26,7 +27,7 @@ public class UserRoleEntity {
   @Column(name = "role")
   private String role;
 
-  @Column(name = "created_date")
-  private LocalDateTime createdDate;
+  @Column(name = "create_date")
+  private LocalDateTime createDate;
 
 }

@@ -3,7 +3,8 @@
 
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="chrome=1" />
   <link rel="stylesheet" href="/css/auth/login.css">
   <title>로그인</title>
 </head>
@@ -27,7 +28,7 @@
         <div class="search">
           <input placeholder="검색어를 입력해주세요">
           <button>
-            <img class="searchImg" src="/image/search.png" alt="검색">
+            <img class="searchImg" src="image/search.png" alt="검색">
           </button>
         </div>
         <!-- 지도와 내정보와 커뮤니티 이미지 -->
@@ -54,9 +55,12 @@
   <div class="container">
     <h2>로그인</h2>
     <form id="loginForm">
-      <input type="text" placeholder="아이디" name="username" id="id">
-      <input type="password" placeholder="비밀번호" name="password" id="password">
-      <input type="checkbox" id="rememberMe"> 아이디 기억하기
+      <input type="text" placeholder="아이디" name="username" id="id" aria-describedby="idAddOn">
+      <input type="password" placeholder="비밀번호" name="password" id="password" aria-describedby="pwAddOn">
+      <input type="checkbox" id="rememberMe">
+      <label class="form-check-label" for="rememberMe">
+        아이디 기억하기
+      </label>
       <button class="loginButton" type="button" onclick=requestLogin()>로그인</button>
     </form>
     <p>아직 회원이 아니신가요? <a href=join>회원가입</a></p>
@@ -72,20 +76,20 @@
   const myInformationPage = () => location.replace("/topbar/myInformation");
   const communityPage = () => location.replace("/topbar/community");
 
-  // document.querySelector("#password").addEventListener("keyup", (event) => {
-  //   if (event.keyCode === 13) {
-  //     requestLogin();
-  //   }
-  // });
-
   document.querySelector("#password").addEventListener("keyup", (event) => {
     if (event.keyCode === 13) {
-      if (!validateFields()) {
-        return;
-      }
       requestLogin();
     }
   });
+
+  // document.querySelector("#password").addEventListener("keyup", (event) => {
+  //   if (event.keyCode === 13) {
+  //     if (!validateFields()) {
+  //       return;
+  //     }
+  //     requestLogin();
+  //   }
+  // });
 
   const requestLogin = () => {
     if (!validateFields()) {
@@ -100,10 +104,14 @@
       localStorage.setItem("rememberId", idElement.value);
     }
 
+    // 비동기 통신 방식 form
+    // html에서 form 태그 가져오기
     // const loginForm = document.querySelector("#loginForm");
-    // const loginFormData = new FormData(loginForm);
+    // form 태그에서 name 기준으로 값 가져오기
+    // const formData = new FormData(loginForm);
 
-    // const loginParams = new URLSearchParams(loginFormData);
+    // formData를 비동기 통신 데이터로 바꾸기
+    // const loginParams = new URLSearchParams(formData);
 
     const dto = {
       user: {
@@ -112,12 +120,15 @@
       },
     };
 
+
+    // form 일반 데이터 전송 시 application/x-www-form-urlencoded
+    // form 파일 데이터 포함 전송 시 multipart/form-data
     fetch("/api/v1/auth/login", {
       method: "POST",
       headers: {
         "Content-Type": "application/json;charset=utf-8",
       },
-      body: JSON.stringify(dto),
+      body: JSON.stringify(dto)
     })
       .then((response) => response.json())
       .then((result) => {

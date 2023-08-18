@@ -55,9 +55,10 @@
   <div class="container">
     <h2>회원가입</h2>
     <form id="joinForm">
-      <input type="text" placeholder="아이디" name="id" id="id">
-      <input type="password" placeholder="비밀번호" name="password" id="password">
-      <input type="password" placeholder="비밀번호 확인" name="confirmPassword" id="confirmPassword">
+      <input type="text" placeholder="아이디" name="id" id="id" aria-describedby="idAddOn" autofocus>
+      <input type="password" placeholder="비밀번호" name="password" id="password" aria-describedby="pwAddOn">
+      <input type="password" placeholder="비밀번호 확인" name="confirmPassword" id="confirmPassword"
+        aria-describedby="cpwAddOn">
       <input type="text" placeholder="이름" name="name" id="userName">
       <input type="text" placeholder="휴대전화" name="phone" id="userPhoneNumber">
       <input type="text" placeholder="이메일" name="email" id="userEmail">
@@ -106,6 +107,7 @@
         userAddress: addressElement.value,
       },
     };
+    // rest 통신
     fetch("/api/v1/auth/join", {
       method: "POST",
       headers: {

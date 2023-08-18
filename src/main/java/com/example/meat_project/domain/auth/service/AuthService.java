@@ -5,6 +5,7 @@ import java.util.Optional;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -14,6 +15,7 @@ import com.example.meat_project.common.exception.BadRequestException;
 import com.example.meat_project.domain.auth.dto.ReqJoinDTO;
 import com.example.meat_project.domain.auth.dto.ReqLoginDTO;
 import com.example.meat_project.model.user.entity.UserEntity;
+import com.example.meat_project.model.user.entity.UserRoleEntity;
 import com.example.meat_project.model.user.repository.UserRepository;
 
 import jakarta.servlet.http.HttpSession;
@@ -25,18 +27,22 @@ import lombok.RequiredArgsConstructor;
 public class AuthService {
 
   private final UserRepository userRepository;
+  private final PasswordEncoder passwordEncoder; // PasswordConfig파일 안 BCryptPasswordEncoder 이놈이 리턴됨.
 
   public ResponseEntity<?> login(ReqLoginDTO dto, HttpSession session) {
-    // 유효성 체크
-    if (dto.getUser().getId() == null ||
-        dto.getUser().getId().equals("") ||
-        dto.getUser().getPassword() == null ||
-        dto.getUser().getPassword().equals("")) {
-      throw new BadRequestException("아이디나 비밀번호를 입력해주세요.");
-    }
-
     // 리파지토리에서 아이디로 삭제되지 않은 유저 찾기
     Optional<UserEntity> userEntityOptional = userRepository.findByIdAndDeleteDateIsNull(dto.getUser().getId()); // AndDeleteDateIsNull
+
+    // 유효성 체크
+    // if (dto.getUser().getId() == null ||
+    // dto.getUser().getId().equals("") ||
+    // dto.getUser().getPassword() == null ||
+    // dto.getUser().getPassword().equals("")) {
+    // throw new BadRequestException("아이디나 비밀번호를 입력해주세요.");
+    // }
+    if (userEntityOptional.isEmpty()) {
+      throw new BadRequestException("존재하지 않는 사용자입니다.");
+    }
 
     // 없으면 (존재하지 않는 사용자입니다.) 메시지 리턴
     if (userEntityOptional.isEmpty()) {
@@ -54,7 +60,7 @@ public class AuthService {
     }
 
     // 세션에 로그인 유저 정보 저장
-    session.setAttribute("dto", LoginUserDTO.of(userEntity));
+    session.setAttribute("loginUserDTO", LoginUserDTO.of(userEntity));
 
     // 응답 데이터로 리턴하기 (로그인에 성공하였습니다.)
     return new ResponseEntity<>(
@@ -67,6 +73,10 @@ public class AuthService {
 
   @Transactional
   public ResponseEntity<?> join(ReqJoinDTO dto) {
+
+    // 리파지토리에서 아이디로 유저 찾기
+    Optional<UserEntity> userEntityOptional = userRepository.findById(dto.getUser().getId());
+
     // 회원가입 정보 입력했는지 확인
     if (dto.getUser() == null ||
         dto.getUser().getId() == null ||
@@ -86,18 +96,21 @@ public class AuthService {
       throw new BadRequestException("회원가입 정보를 올바르게 입력해주세요.");
     }
 
-    // 리파지토리에서 아이디로 유저 찾기
-    Optional<UserEntity> userEntityOptional = userRepository.findById(dto.getUser().getId());
+    // if (userEntityOptional.isPresent()) {
+    // throw new BadRequestException("이미 존재하는 아이디입니다.");
+    // }
 
     // 있으면 (이미 존재하는 아이디입니다.) 메시지 리턴
     if (userEntityOptional.isPresent()) {
       throw new BadRequestException("이미 존재하는 아이디입니다.");
     }
 
+    String encodePassword = passwordEncoder.encode(dto.getUser().getPassword());
+
     // 없으면 회원가입 처리
-    UserEntity userEntity = UserEntity.builder()
+    UserEntity userEntityForSaving = UserEntity.builder()
         .id(dto.getUser().getId())
-        .password(dto.getUser().getPassword())
+        .password(encodePassword)
         .userName(dto.getUser().getUserName())
         .userPhoneNumber(dto.getUser().getUserPhoneNumber())
         .userEmail(dto.getUser().getUserEmail())
@@ -105,7 +118,13 @@ public class AuthService {
         .createDate(LocalDateTime.now())
         .build();
 
-    userRepository.save(userEntity);
+    // 'USER' 역할을 'user_role' 테이블에 추가
+    UserRoleEntity userRoleEntity = new UserRoleEntity();
+    userRoleEntity.setUserEntity(userEntityForSaving);
+    userRoleEntity.setRole("USER");
+    userRoleEntity.setCreateDate(LocalDateTime.now());
+
+    userRepository.save(userEntityForSaving);
 
     // 응답 데이터로 리턴하기 (회원가입에 성공하였습니다.)
     return new ResponseEntity<>(
@@ -114,6 +133,7 @@ public class AuthService {
             .message("회원가입에 성공하였습니다.")
             .build(),
         HttpStatus.OK);
+
   }
 
 }
