@@ -54,15 +54,15 @@
   </div>
   <div class="container">
     <h2>회원가입</h2>
-    <form id="joinForm">
+    <form id="joinForm" onsubmit="event.preventDefault(); requestJoin();">
       <input type="text" placeholder="아이디" name="id" id="id" aria-describedby="idAddOn" autofocus>
       <input type="password" placeholder="비밀번호" name="password" id="password" aria-describedby="pwAddOn">
       <input type="password" placeholder="비밀번호 확인" name="confirmPassword" id="confirmPassword"
         aria-describedby="cpwAddOn">
-      <input type="text" placeholder="이름" name="name" id="userName">
-      <input type="text" placeholder="휴대전화" name="phone" id="userPhoneNumber">
-      <input type="text" placeholder="이메일" name="email" id="userEmail">
-      <input type="text" placeholder="주소" name="address" id="userAddress">
+      <input type="text" placeholder="이름" name="userName" id="userName">
+      <input type="text" placeholder="휴대전화" name="userPhoneNumber" id="userPhoneNumber">
+      <input type="text" placeholder="이메일" name="userEmail" id="userEmail">
+      <input type="text" placeholder="주소" name="userAddress" id="userAddress">
       <button class="joinButton" type="button" onclick=requestJoin()>회원가입</button>
     </form>
     <p>이미 회원이신가요? <a href=login>로그인</a></p>
