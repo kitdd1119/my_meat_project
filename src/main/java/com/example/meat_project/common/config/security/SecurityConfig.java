@@ -29,7 +29,7 @@ public class SecurityConfig {
     // 요청 주소 인증 및 인가 세팅
     httpSecurity.authorizeHttpRequests(
         config -> config
-            .requestMatchers("/css/**", "/templates/**")
+            .requestMatchers("/css/**", "/image/**", "/templates/**")
             // 위에 해당하는 주소를 인증 및 인가없이 접속 가능하도록 한다.
             .permitAll()
             .requestMatchers("/auth/**", "/api/*/auth/**")

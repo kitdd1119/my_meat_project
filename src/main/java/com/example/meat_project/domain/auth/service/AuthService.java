@@ -51,13 +51,24 @@ public class AuthService {
 
     UserEntity userEntity = userEntityOptional.get();
 
+    // 입력한 비밀번호를 해싱 (SHA-256 혹은 Bcrypt 사용)
+    String inputPassword = dto.getUser().getPassword();
+    boolean isPasswordMatch = passwordEncoder.matches(inputPassword, userEntity.getPassword());
+
+    System.out.println("입력한 비밀번호: " + inputPassword);
+    System.out.println("DB에 저장된 비밀번호: " + userEntity.getPassword());
+
     // System.out.println("입력한 비밀번호: " + dto.getUser().getPassword());
     // System.out.println("DB에 저장된 비밀번호: " + userEntity.getPassword());
 
-    // 비밀번호가 일치하지 않으면 (비밀번호가 일치하지 않습니다.) 메시지 리턴
-    if (!userEntity.getPassword().equals(dto.getUser().getPassword())) {
+    if (!isPasswordMatch) {
       throw new BadRequestException("비밀번호가 일치하지 않습니다.");
     }
+
+    // 비밀번호가 일치하지 않으면 (비밀번호가 일치하지 않습니다.) 메시지 리턴
+    // if (!userEntity.getPassword().equals(dto.getUser().getPassword())) {
+    //   throw new BadRequestException("비밀번호가 일치하지 않습니다.");
+    // }
 
     // 세션에 로그인 유저 정보 저장
     session.setAttribute("loginUserDTO", LoginUserDTO.of(userEntity));
